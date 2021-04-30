@@ -13,7 +13,7 @@ def bl21_FB(t, y, params):
     u2 = 0.55 * (S / (0.3 + S))
     u3 = 0.25 * (A / (0.4 + A))
     D= Fe / V
-    reac = [u1*X + u2*X + u3*X - D*X, -k1*u1*X - k2*u2*X - D*S + D*Se, k3*u2*X - k4*u3*X - D*A, k11*u1*X - D*P, Fe] #X, S, A, P, V0 || usando as reacoes de crescimento
+    reac = [u1*X + u2*X + u3*X - D*X, -k1*u1*X - k2*u2*X - D*S + D*Se, k3*u2*X - k4*u3*X - D*A, k11*u1*X - D*P, Fe] #X, S, A, P, V || usando as reacoes de crescimento
     return reac
 
 
