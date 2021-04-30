@@ -9,10 +9,10 @@ from scipy.optimize import basinhopping
 def bl21_B(t, y, params):
     X, S, A, P = y
     k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0 = params
-    u1 = 0.25 * (S / 0.3 + S) * t
-    u2 = 0.55 * (S / 0.3 + S) * t
-    u3 = 0.25 * (S / 0.4 + S) * t
-    reac = [u1*X + u2*X + u3*X, -k1*u1*X - k2*u2*X, k3*u2*X - k4*u3*X, k11*u1*X] #usando as reacoes de crescimento
+    u1 = 0.25 * (S / (0.3 + S))
+    u2 = 0.55 * (S / (0.3 + S))
+    u3 = 0.25 * (A / (0.4 + A))
+    reac = [u1*X + u2*X + u3*X, -k1*u1*X - k2*u2*X, k3*u2*X - k4*u3*X, k11*u1*X] #X, S, A, P || usando as reacoes de crescimento
     return reac
 
 
@@ -46,18 +46,16 @@ params= [k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0]
 
 t0= 0 #tempo inicial
 t= 7 #tempo final
-dt= 0.0001 #intervalo de tempo entre reads
+dt= 0.001 #intervalo de tempo entre reads
 
 
 # Call the ODE solver
-r = ode(bl21_B).set_integrator('lsoda', method='bdf', lband=0) #lband é o limite inferior -- para nao haver valores negativos
+r = ode(bl21_B).set_integrator('lsoda', method='bdf', lband= 0) #lband é o limite inferior -- para nao haver valores negativos
 r.set_initial_value(y0, t0).set_f_params(params)
 
-T= []
-x= []
-s= []
-a= []
-p= []
+
+#storing variables
+T, x, s, a, p= [], [], [], [], []
 
 while r.successful() and r.t < t:
     time= r.t + dt
@@ -68,7 +66,8 @@ while r.successful() and r.t < t:
     p.append(r.integrate(time)[3])
     #print(time, r.integrate(time))
 
-# Plotting
+
+# using the storing variables to plot
 T = np.array([0] + T)
 x = np.array([y0[0]] + x)
 s = np.array([y0[1]] + s)
@@ -97,6 +96,6 @@ plt.plot(T, [V0] * len(T), label='Volume (L)', color='Purple')
 plt.legend(loc='best')
 plt.xlabel('Tempo (h)')
 plt.ylabel('Concentração (g/L)')
-plt.xlim(0., 0.2)
+plt.xlim(0., 0.5)
 plt.grid()
 plt.show()

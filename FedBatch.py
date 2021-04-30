@@ -7,12 +7,13 @@ from scipy.optimize import basinhopping
 
 ##FED-BATCH##
 def bl21_FB(t, y, params):
-    X, S, A, P, V0 = y
+    X, S, A, P, V = y
     k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0, Fe, Se = params
-    u1 = 0.25 * (S / 0.3 + S) * t
-    u2 = 0.55 * (S / 0.3 + S) * t
-    u3 = 0.25 * (S / 0.4 + S) * t
-    reac =  # usando as reacoes de crescimento
+    u1 = 0.25 * (S / (0.3 + S))
+    u2 = 0.55 * (S / (0.3 + S))
+    u3 = 0.25 * (A / (0.4 + A))
+    D= Fe / V
+    reac = [u1*X + u2*X + u3*X - D*X, -k1*u1*X - k2*u2*X - D*S + D*Se, k3*u2*X - k4*u3*X - D*A, k11*u1*X - D*P, Fe] #X, S, A, P, V0 || usando as reacoes de crescimento
     return reac
 
 
@@ -21,7 +22,7 @@ X0= 4 #g/L
 S0= 0 #g/L
 A0= 0 #g/L
 P0= 0 #g/L
-V0= 3 #L || como ficaria o volume nos valores iniciais??
+V= 8 #L
 
 # Parameters
 k1= 4.412
@@ -40,27 +41,25 @@ Fe= 0.7 #L/h || caudal de entrada || 350 g/L glucose
 Se= 350 #concentração do substrato de entrada g/L
 
 
+
 #lista com os valores iniciais fornecida a func
-y0= [X0, S0, A0, P0, V0]
+y0= [X0, S0, A0, P0, V]
 
 #lista com os parametros fornecida a func
-params= [k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0, Fe]
+params= [k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0, Fe, Se]
 
 t0= 0 #tempo inicial
 t= 20 #tempo final
-dt= 0.5 #intervalo de tempo entre reads
+dt= 0.001 #intervalo de tempo entre reads
 
 
 # Call the ODE solver
 r = ode(bl21_FB).set_integrator('lsoda', method='bdf', lband=0) #lband é o limite inferior -- para nao haver valores negativos
 r.set_initial_value(y0, t0).set_f_params(params)
 
-T= []
-x= []
-s= []
-a= []
-p= []
-v= []
+
+#storing variables
+T, x, s, a, p, v= [], [], [], [], [], []
 
 while r.successful() and r.t < t:
     time= r.t + dt
@@ -92,7 +91,7 @@ print(a)
 print('#'*40)
 print(p)
 print('#'*40)
-'''
+#'''
 
 plt.plot(T, x, label='Biomassa', color='blue')
 plt.plot(T, s, label='Substrato', color='red')
@@ -102,6 +101,7 @@ plt.plot(T, v, label='Volume (L)', color='Purple')
 plt.legend(loc='best')
 plt.xlabel('Tempo (h)')
 plt.ylabel('Concentração (g/L)')
-#plt.xlim(0., 1)
+#plt.xlim(0, 1)
+#plt.ylim(0, 5)
 plt.grid()
 plt.show()
