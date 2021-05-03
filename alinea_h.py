@@ -152,5 +152,3 @@ def fun(X):
 
 root = fsolve(fun, [0, 0, 0, 0])
 print(root)
-
-
