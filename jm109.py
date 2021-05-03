@@ -65,7 +65,7 @@ params= [k4, u2, Ks3]
 
 # Final time and step
 t0= 0 #tempo inicial
-t= 20 #tempo final
+tf= 20 #tempo final
 dt= 0.5 #intervalo de tempo entre reads
 
 
@@ -85,15 +85,18 @@ def estimate(params):
     # Nevertheless, use always the global Y (array to store the results) to re-write this variable with new results
     global model
     global t
+    global t0
     global dados_exp
     global y0
     global Y
+    global diferenca
+
 
     # ode
     # consider scipy.integrate.ode method, with the integrator lsoda and method bdf
     # you should apply the initial values and parameters
     # Call the ODE solver
-    r = ode(jm109).set_integrator('lsoda', method='bdf', lband=0)  # lband é o limite inferior -- para nao haver valores negativos
+    r = ode(model).set_integrator('lsoda', method='bdf', lband=0)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
 
     # Using the global storing variable Y
@@ -106,8 +109,8 @@ def estimate(params):
     Y = [[1, 0, 0, 0, 3]]
 
     # T, x, s, a, p, v = [], [], [], [], [], []  # storing variables
-    while r.successful() and r.t < t:
-        time = r.t + dt
+    while r.successful() and r.t < tf:
+        time = r.tf + dt
         Y.append(r.integrate(time).tolist())
         # T.append(r.t)
         # x.append(r.integrate(time)[0])
@@ -123,13 +126,10 @@ def estimate(params):
     for i in range(len(dados_exp)):
         dados_exp[i].pop(0)
 
+    #Consider the metrics to calculate the error between experimental and predicted data
+    diferenca= np.subtract(dados_exp,Y)
+    return diferenca
 
-    # Consider the metrics to calculate the error between experimental and predicted data
-
-    #return
-
-
-    pass
 
 
 # Bounds
@@ -159,18 +159,21 @@ class Bounds(object):
 # model = jm109
 model = jm109
 
-# t = timespan
+#t = timespan
+#Final time and step
+t1 = 20
+dt = 0.5
+t= timespan(t0, t1, dt)
 
 
 # dados_exp = pd.read_excel or pd.read_csv
-dados_exp= pd.read_excel('dados_exp.xlsx').to_numpy()
+dados_exp= pd.read_excel('dados_exp.xlsx').to_numpy().tolist()
 
 # y0 = initial conditions
 
 # Y = initialize the storing array. consider np.zeros()
 
 # Y[0,:] = append the initial conditions to the results
-
 
 
 
@@ -190,4 +193,5 @@ x0 = [9.846, 0.55 * (0 / (0.3 + 0)), 0.4]
 minimizer_kwargs = {"method": "BFGS"}
 
 #aserio= basinhopping(jm109, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-#tentar= basinhopping(jm109, x0, minimizer_kwargs= minimizer_kwargs, niter= 10, accept_test= bounds)
+#tentar= basinhopping(jm109_ola, x0, minimizer_kwargs= minimizer_kwargs, niter= 10, accept_test= bounds)
+#print(tentar)

@@ -1,0 +1,11 @@
+F= fluxo
+
+dX/dt= u1 * X + u2 * X + u3 * X - F * X
+
+dS/dt= - k1 * u1 * X - k2 * u2 * X + Fin * S0 - Fin * S
+
+dA/dt= k3 * u2 * X - k4 * u3 * X - Fin * A
+
+dP/dt= k11 * u1 * X - Fin * P
+
+dV/dt= Fin - Fout
