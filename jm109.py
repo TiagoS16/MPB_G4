@@ -23,9 +23,9 @@ def jm109(t, y, params):
     #u2 = 0.55 * (S / (0.3 + S))
     u3 = 0.25 * (A / (Ks3 + A))
 
-    D = 0.4 / V
+    D = 0.7 / V
     #reac = [u1 * X + u2 * X + u3 * X - D * X, -k1 * u1 * X - k2 * u2 * X - D * S + D * Se, k3 * u2 * X - k4 * u3 * X - D * A, k11 * u1 * X - D * P, Fe]  # X, S, A, P, V || usando as reacoes de crescimento
-    reac = [u1 * X + u2 * X + u3 * X - D * X, -4.412 * u1 * X - 22.22 * u2 * X - D * S + D * 350, 8.61 * u2 * X - k4 * u3 * X - D * A, 13.21 * u1 * X - D * P, 0.4]  # X, S, A, P, V || usando as reacoes de crescimento
+    reac = [u1 * X + u2 * X + u3 * X - D * X, -4.412 * u1 * X - 22.22 * u2 * X - D * S + D * 350, 8.61 * u2 * X - k4 * u3 * X - D * A, 13.21 * u1 * X - D * P, 0.7]  # X, S, A, P, V || usando as reacoes de crescimento
     return reac
 
 
@@ -65,7 +65,7 @@ params= [k4, u2, Ks3]
 
 # Final time and step
 t0= 0 #tempo inicial
-tf= 20 #tempo final
+t= 20 #tempo final
 dt= 0.5 #intervalo de tempo entre reads
 
 
@@ -86,6 +86,7 @@ def estimate(params):
     global model
     global t
     global t0
+    #global tf
     global dados_exp
     global y0
     global Y
@@ -109,8 +110,8 @@ def estimate(params):
     Y = [[1, 0, 0, 0, 3]]
 
     # T, x, s, a, p, v = [], [], [], [], [], []  # storing variables
-    while r.successful() and r.t < tf:
-        time = r.tf + dt
+    while r.successful() and r.t < t:
+        time = r.t + dt
         Y.append(r.integrate(time).tolist())
         # T.append(r.t)
         # x.append(r.integrate(time)[0])
@@ -128,8 +129,9 @@ def estimate(params):
 
     #Consider the metrics to calculate the error between experimental and predicted data
     diferenca= np.subtract(dados_exp,Y)
-    return diferenca
 
+    #por aqui a formula para calcular o erro e por essa formula como output?
+    return diferenca
 
 
 # Bounds
@@ -163,7 +165,7 @@ model = jm109
 #Final time and step
 t1 = 20
 dt = 0.5
-t= timespan(t0, t1, dt)
+#t= timespan(t0, t1, dt)
 
 
 # dados_exp = pd.read_excel or pd.read_csv
@@ -174,7 +176,6 @@ dados_exp= pd.read_excel('dados_exp.xlsx').to_numpy().tolist()
 # Y = initialize the storing array. consider np.zeros()
 
 # Y[0,:] = append the initial conditions to the results
-
 
 
 ######################################################################################
@@ -192,6 +193,9 @@ x0 = [9.846, 0.55 * (0 / (0.3 + 0)), 0.4]
 
 minimizer_kwargs = {"method": "BFGS"}
 
-#aserio= basinhopping(jm109, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-#tentar= basinhopping(jm109_ola, x0, minimizer_kwargs= minimizer_kwargs, niter= 10, accept_test= bounds)
+aserio= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
+#tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 10, accept_test= bounds)
 #print(tentar)
+
+
+print(estimate(params))
