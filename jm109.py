@@ -28,11 +28,11 @@ def jm109(t, y, params):
 
 
 # Initial conditions
-X0= 1 #g/L
+X0= 4 #g/L
 S0= 0 #g/L
 A0= 0 #g/L
 P0= 0 #g/L
-V= 3 #L
+V= 8 #L
 
 #lista com os valores iniciais fornecida a func
 y0= [X0, S0, A0, P0, V]
@@ -75,7 +75,7 @@ def estimate(params):
     # consider scipy.integrate.ode method, with the integrator lsoda and method bdf
     # you should apply the initial values and parameters
     # Call the ODE solver
-    r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=500)  # lband é o limite inferior -- para nao haver valores negativos
+    r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=5000)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
 
     # Using the global storing variable Y
@@ -165,8 +165,7 @@ x0 = [9.846, 0.55 * (0 / (0.3 + 0)), 0.4]
 minimizer_kwargs = {"method": "BFGS"}
 
 #aserio= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter=10, seed=1, disp=True)
+tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=10, seed=1, disp=True)
 print(tentar)
 
 #print(estimate(params))
-#, accept_test= bounds
