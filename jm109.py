@@ -28,11 +28,11 @@ def jm109(t, y, params):
 
 
 # Initial conditions
-X0= 4 #g/L
+X0= 1 #g/L  4
 S0= 0 #g/L
 A0= 0 #g/L
 P0= 0 #g/L
-V= 8 #L
+V= 3 #L   8
 
 #lista com os valores iniciais fornecida a func
 y0= [X0, S0, A0, P0, V]
@@ -60,9 +60,6 @@ def estimate(params):
     :return: the error between measured and predicted data, i.e. difS + difX + difA + difV
     """
 
-    # Consider using global to access and change global variables outside of this function
-    # Otherwise, model, time, initial conditions and experimental data can be hardcoded here within the function
-    # Nevertheless, use always the global Y (array to store the results) to re-write this variable with new results
     global model
     global t
     global t0
@@ -70,60 +67,40 @@ def estimate(params):
     global dados_exp
     global y0
     global Y
+    global soma1
 
-    # ode
-    # consider scipy.integrate.ode method, with the integrator lsoda and method bdf
-    # you should apply the initial values and parameters
-    # Call the ODE solver
     r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=5000)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
 
-    # Using the global storing variable Y
-
-    # Solve ode for the time step
-    # see scipy docs on how to resolve the ode for the time steps
-    # append the results to the Y storing variable
-
-    # Y= np.array([1, 0, 0, 0, 3]) #storing with initial
     Y = [[1, 0, 0, 0, 3]]
 
-    # T, x, s, a, p, v = [], [], [], [], [], []  # storing variables
     while r.successful() and r.t < t:
         time = r.t + dt
         Y.append(r.integrate(time).tolist())
-        # T.append(r.t)
-        # x.append(r.integrate(time)[0])
-        # s.append(r.integrate(time)[1])
-        # a.append(r.integrate(time)[2])
-        # p.append(r.integrate(time)[3])
-        # v.append(r.integrate(time)[4])
-        # print(time, r.integrate(time))
-    print(Y)
+
     for i in range(len(Y)):
         Y[i].pop(3)
+    #print(Y)
 
-    #Consider the metrics to calculate the error between experimental and predicted data
-    diferenca= np.subtract(Y, dados_exp) #usar a função que o prof deu
-    po = np.power(diferenca, 2)
-    soma= po.sum(axis=0)
-    soma1= soma.sum()
-    print('=')
+    if len(Y) == len(dados_exp):
+        diferenca= np.subtract(Y, dados_exp)
+        po = np.power(diferenca, 2)
+        soma= po.sum(axis=0)
+        soma1= soma.sum()
+    #print('=')
     return soma1 #soma dos quadrados das diferenças
 
 
-# model = jm109
 model = jm109
 
 #t = timespan
 #Final time and step
 
-# dados_exp = pd.read_excel or pd.read_csv
 dados_exp= pd.read_excel('dados_exp.xlsx').to_numpy().tolist()
 for i in range(len(dados_exp)):
     dados_exp[i].pop(0)
 
 
-######################################################################################
 
 # Bounds
 # Consider using the following class for setting the Simulated Annealing bounds
@@ -155,17 +132,59 @@ LB = [0, 0, 0]
 UB = [4, 4, 4]
 bounds = Bounds(LB, UB)
 
-# Simulated Annealing
-# consider scipy.optimize.basinhopping method, with the method BFGS, niter 200, seed 1 and the respective bounds.
-# To perform some testing consider lowering the number of iterations to 10, as SA can take a while
-
 # initial guess, that is the initial values for the parameters to be estimated. It can be those available in the pdf
 x0 = [9.846, 0.55 * (0 / (0.3 + 0)), 0.4]
 
-minimizer_kwargs = {"method": "BFGS"}
+minimizer_kwargs = {"method": "Nelder-Mead"} #method BFGS -- não funfou
 
-#aserio= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
+#for_real= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
 tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=10, seed=1, disp=True)
 print(tentar)
 
-#print(estimate(params))
+
+#######graficos
+Yx, Ys, Ya, Yv=[], [], [], []
+DEx, DEs, DEa, DEv=[], [], [], []
+T=[0]
+
+
+for i in range(40):
+    T.append(T[i]+0.5)
+
+for i in range(len(Y)):
+    Yx.append(Y[i][0])
+    Ys.append(Y[i][1])
+    Ya.append(Y[i][2])
+    Yv.append(Y[i][3])
+
+for i in range(len(dados_exp)):
+    DEx.append(dados_exp[i][0])
+    DEs.append(dados_exp[i][1])
+    DEa.append(dados_exp[i][2])
+    DEv.append(dados_exp[i][3])
+
+#plot do grafico do estimado
+plt.plot(T, Yx, label='Biomassa', color='blue')
+plt.plot(T, Ys, label='Substrato', color='red')
+plt.plot(T, Ya, label='Acetato', color='green')
+plt.plot(T, Yv, label='Volume (L)', color='Purple')
+plt.legend(loc='best')
+plt.xlabel('Tempo (h)')
+plt.ylabel('Concentração (g/L)')
+#plt.xlim(0, 1)
+#plt.ylim(0, 30)
+plt.grid()
+plt.show()
+
+#plot do grafico dos dados experimentais
+plt.plot(T, DEx, label='Biomassa', color='blue')
+plt.plot(T, DEs, label='Substrato', color='red')
+plt.plot(T, DEa, label='Acetato', color='green')
+plt.plot(T, DEv, label='Volume (L)', color='Purple')
+plt.legend(loc='best')
+plt.xlabel('Tempo (h)')
+plt.ylabel('Concentração (g/L)')
+#plt.xlim(0, 1)
+#plt.ylim(0, 30)
+plt.grid()
+plt.show()
