@@ -9,7 +9,7 @@ from sympy import *
 
 X, S, A, P = symbols('X S A P')
 
-#'''
+
 #Reactions
 u1 = 0.25 * (S / (0.3 + S))
 u2 = 0.55 * (S / (0.3 + S))
@@ -35,12 +35,10 @@ k9= 21.04
 k10= 7.65
 k11= 13.21
 V0= 8 #o volume inicial não se altera
-#Fe= 0.7 #L/h || caudal de entrada || 350 g/L glucose
 Se= 350 #concentração do substrato de entrada g/L
-#'''
+Fin= 0.7 #L/h || caudal de entrada || 350 g/L glucose
+Fout= Fin #caudal de saida
 
-Fin= 0.7
-Fout= Fin
 
 difX= u1 * X + u2 * X + u3 * X - Fin * X
 difS= - k1 * u1 * X - k2 * u2 * X + Fin * S0 - Fin * S
@@ -48,6 +46,7 @@ difA= k3 * u2 * X - k4 * u3 * X - Fin * A
 difP= k11 * u1 * X - Fin * P
 difV= Fin - Fout
 todas= [difX, difS, difA, difP]
+
 
 def derX(t=False):
     dX = [sympy.diff(difX, X), sympy.diff(difX, S), sympy.diff(difX, A), sympy.diff(difX, P)]
@@ -126,9 +125,9 @@ derP()
 
 
 def fun(X):
-    S= 1
-    A= 1
-    P= 1
+    S= 0
+    A= 0
+    P= 0
     # Reactions
     u1 = 0.25 * (S / (0.3 + S))
     u2 = 0.55 * (S / (0.3 + S))
@@ -150,5 +149,7 @@ def fun(X):
             (k3 * u2 * X[2] - k4 * u3 * X[2] - Fin * A),
             (k11 * u1 * X[3] - Fin * P)]
 
-root = fsolve(fun, [0, 0, 0, 0])
+
+root = fsolve(fun, [1, 1, 1, 1])
 print(root)
+print(np.isclose(fun(root), [0.0, 0.0, 0.0, 0.0]))

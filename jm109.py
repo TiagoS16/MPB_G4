@@ -20,11 +20,9 @@ def jm109(t, y, params):
     k4, u2, Ks3 = params
 
     u1 = 0.25 * (S / (0.3 + S))
-    #u2 = 0.55 * (S / (0.3 + S))
     u3 = 0.25 * (A / (Ks3 + A))
 
     D = 0.7 / V
-    #reac = [u1 * X + u2 * X + u3 * X - D * X, -k1 * u1 * X - k2 * u2 * X - D * S + D * Se, k3 * u2 * X - k4 * u3 * X - D * A, k11 * u1 * X - D * P, Fe]  # X, S, A, P, V || usando as reacoes de crescimento
     reac = [u1 * X + u2 * X + u3 * X - D * X, -4.412 * u1 * X - 22.22 * u2 * X - D * S + D * 350, 8.61 * u2 * X - k4 * u3 * X - D * A, 13.21 * u1 * X - D * P, 0.7]  # X, S, A, P, V || usando as reacoes de crescimento
     return reac
 
@@ -35,23 +33,6 @@ S0= 0 #g/L
 A0= 0 #g/L
 P0= 0 #g/L
 V= 3 #L
-
-'''
-k1= 4.412
-k2= 22.22
-k3= 8.61
-k4= 9.846
-k5= 3.253
-k6= 12.29
-k7= 4.085
-k8= 3.345
-k9= 21.04
-k10= 7.65
-k11= 13.21
-V0= 8 #o volume inicial não se altera
-Fe= 0.7 #L/h || caudal de entrada || 350 g/L glucose
-Se= 350 #concentração do substrato de entrada g/L
-'''
 
 #lista com os valores iniciais fornecida a func
 y0= [X0, S0, A0, P0, V]
@@ -67,12 +48,11 @@ params= [k4, u2, Ks3]
 t0= 0 #tempo inicial
 t= 20 #tempo final
 dt= 0.5 #intervalo de tempo entre reads
+#linspace
 
 
 def estimate(params):
-
     """
-
     This will be our estimate function that works out as the calculation of the difference between the experimental
     and predicted values and can be used as the objective function
 
@@ -86,18 +66,16 @@ def estimate(params):
     global model
     global t
     global t0
-    #global tf
+    global dt
     global dados_exp
     global y0
     global Y
-    global diferenca
-
 
     # ode
     # consider scipy.integrate.ode method, with the integrator lsoda and method bdf
     # you should apply the initial values and parameters
     # Call the ODE solver
-    r = ode(model).set_integrator('lsoda', method='bdf', lband=0)  # lband é o limite inferior -- para nao haver valores negativos
+    r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=500)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
 
     # Using the global storing variable Y
@@ -120,19 +98,32 @@ def estimate(params):
         # p.append(r.integrate(time)[3])
         # v.append(r.integrate(time)[4])
         # print(time, r.integrate(time))
-
+    print(Y)
     for i in range(len(Y)):
         Y[i].pop(3)
 
-    for i in range(len(dados_exp)):
-        dados_exp[i].pop(0)
-
     #Consider the metrics to calculate the error between experimental and predicted data
-    diferenca= np.subtract(dados_exp,Y)
+    diferenca= np.subtract(Y, dados_exp) #usar a função que o prof deu
+    po = np.power(diferenca, 2)
+    soma= po.sum(axis=0)
+    soma1= soma.sum()
+    print('=')
+    return soma1 #soma dos quadrados das diferenças
 
-    #por aqui a formula para calcular o erro e por essa formula como output?
-    return diferenca
 
+# model = jm109
+model = jm109
+
+#t = timespan
+#Final time and step
+
+# dados_exp = pd.read_excel or pd.read_csv
+dados_exp= pd.read_excel('dados_exp.xlsx').to_numpy().tolist()
+for i in range(len(dados_exp)):
+    dados_exp[i].pop(0)
+
+
+######################################################################################
 
 # Bounds
 # Consider using the following class for setting the Simulated Annealing bounds
@@ -158,27 +149,7 @@ class Bounds(object):
 
         return tmax and tmin
 
-# model = jm109
-model = jm109
 
-#t = timespan
-#Final time and step
-t1 = 20
-dt = 0.5
-#t= timespan(t0, t1, dt)
-
-
-# dados_exp = pd.read_excel or pd.read_csv
-dados_exp= pd.read_excel('dados_exp.xlsx').to_numpy().tolist()
-
-# y0 = initial conditions
-
-# Y = initialize the storing array. consider np.zeros()
-
-# Y[0,:] = append the initial conditions to the results
-
-
-######################################################################################
 #Bounds
 LB = [0, 0, 0]
 UB = [4, 4, 4]
@@ -193,9 +164,9 @@ x0 = [9.846, 0.55 * (0 / (0.3 + 0)), 0.4]
 
 minimizer_kwargs = {"method": "BFGS"}
 
-aserio= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-#tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 10, accept_test= bounds)
-#print(tentar)
+#aserio= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
+tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter=10, seed=1, disp=True)
+print(tentar)
 
-
-print(estimate(params))
+#print(estimate(params))
+#, accept_test= bounds
