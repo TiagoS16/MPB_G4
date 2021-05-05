@@ -17,9 +17,10 @@ def jm109(t, y, params):
     '''
 
     X, S, A, P, V = y
-    k4, u2, Ks3 = params
+    k4, umax2, Ks3 = params
 
     u1 = 0.25 * (S / (0.3 + S))
+    u2 = umax2 * (S / (0.3 + S))
     u3 = 0.25 * (A / (Ks3 + A))
 
     D = 0.7 / V
@@ -28,21 +29,21 @@ def jm109(t, y, params):
 
 
 # Initial conditions
-X0= 1 #g/L  BL21=4  dados_exp=1
-S0= 0 #g/L
-A0= 0 #g/L
-P0= 0 #g/L
-V= 3 #L  BL21=8  dados_exp=3
+X0 = 4 #g/L  BL21=4  dados_exp=1
+S0 = 0 #g/L
+A0 = 0 #g/L
+P0 = 0 #g/L
+V = 8 #L  BL21=8  dados_exp=3
 
 #lista com os valores iniciais fornecida a func
-y0= [X0, S0, A0, P0, V]
+y0 = [X0, S0, A0, P0, V]
 
 #lista com os parametros fornecida a func
 #params_old= [k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0, Fe, Se]
-k4= 9.846
-u2 = 0.55 * (0 / (0.3 + 0))
-Ks3= 0.4
-params= [k4, u2, Ks3]
+k4 = 9.846
+umax2 = 0.55
+Ks3 = 0.4
+params = [k4, umax2, Ks3]
 
 # Final time and step
 t0= 0 #tempo inicial
@@ -137,9 +138,9 @@ UB = [4, 4, 4]
 bounds = Bounds(LB, UB)
 
 # initial guess, that is the initial values for the parameters to be estimated. It can be those available in the pdf
-x0 = [9.846, 0.55 * (0 / (0.3 + 0)), 0.4]
+x0 = [9.846, 0.55, 0.4]
 
-minimizer_kwargs = {"method": "Nelder-Mead"} #method BFGS -- não funfou
+minimizer_kwargs = {"method": "BFGS"} #method BFGS # Nelder-Mead
 
 #for_real= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
 tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=10, seed=1, disp=True)
