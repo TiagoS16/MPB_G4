@@ -68,26 +68,30 @@ def estimate(params):
     global y0
     global Y
     global soma1
+    global coisa
 
     r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=5000)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
 
-    Y = [[1, 0, 0, 0, 3]]
+    Y = [[1, 0, 0, 0, 3]] #variavel Y com os dados iniciais
 
     while r.successful() and r.t < t:
         time = r.t + dt
         Y.append(r.integrate(time).tolist())
 
-    for i in range(len(Y)):
+    for i in range(len(Y)): #retira a coluna da proteina(P) para ter uma matriz igual à dos dados experimentais
         Y[i].pop(3)
-    #print(Y)
 
-    if len(Y) == len(dados_exp):
-        diferenca= np.subtract(Y, dados_exp)
-        po = np.power(diferenca, 2)
-        soma= po.sum(axis=0)
-        soma1= soma.sum()
-    #print('=')
+    if len(Y) == len(dados_exp): #a função só vai executar isto quando os tamanhos das 2 matrizes forem iguais
+        #isto é necessário porque a ODE estava a terminar com uma matriz com menos linhas e não permitia a execução do erro
+        #o anterior acontecia porque a ODE não estava a conseguir integrar com sucesso (while r.successful no chunk acima)
+        #para evitar isto fizemos com que o basinhopping use os valores anteriores da ODE caso a atual execução da mesma dê o tal erro
+        coisa= Y #guardar numa variavel diferente para no final conseguir usar a matriz dos estimados sem as falhas faladas anteriormente
+        #diferenca= np.subtract(Y, dados_exp)
+        diferenca = np.subtract(coisa, dados_exp) #diferença entre os valores
+        po = np.power(diferenca, 2) #diferença ao quadrado
+        soma= po.sum(axis=0) #soma dos quadrados das diferenças
+        soma1= soma.sum() #soma das somas dos quadrados das diferenças
     return soma1 #soma dos quadrados das diferenças
 
 
@@ -97,7 +101,7 @@ model = jm109
 #Final time and step
 
 dados_exp= pd.read_excel('dados_exp.xlsx').to_numpy().tolist()
-for i in range(len(dados_exp)):
+for i in range(len(dados_exp)): #retira a coluna do tempo(T) para ter uma matriz igual à Y dos estimados
     dados_exp[i].pop(0)
 
 
@@ -148,16 +152,16 @@ DEx, DEs, DEa, DEv=[], [], [], []
 T=[0]
 
 
-for i in range(40):
+for i in range(40): #criar a lista com os tempos para fazer os graficos
     T.append(T[i]+0.5)
 
-for i in range(len(Y)):
-    Yx.append(Y[i][0])
-    Ys.append(Y[i][1])
-    Ya.append(Y[i][2])
-    Yv.append(Y[i][3])
+for i in range(len(coisa)): #separar as colunas da matriz dos estimados para obter os valores para fazer o grafico
+    Yx.append(coisa[i][0])
+    Ys.append(coisa[i][1])
+    Ya.append(coisa[i][2])
+    Yv.append(coisa[i][3])
 
-for i in range(len(dados_exp)):
+for i in range(len(dados_exp)): #separar as colunas da matriz dos dados experimentais para obter os valores para fazer o grafico
     DEx.append(dados_exp[i][0])
     DEs.append(dados_exp[i][1])
     DEa.append(dados_exp[i][2])
