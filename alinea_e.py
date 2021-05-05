@@ -28,11 +28,11 @@ def jm109(t, y, params):
 
 
 # Initial conditions
-X0= 1 #g/L  4
+X0= 1 #g/L  BL21=4  dados_exp=1
 S0= 0 #g/L
 A0= 0 #g/L
 P0= 0 #g/L
-V= 3 #L   8
+V= 3 #L  BL21=8  dados_exp=3
 
 #lista com os valores iniciais fornecida a func
 y0= [X0, S0, A0, P0, V]
