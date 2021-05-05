@@ -74,7 +74,7 @@ def estimate(params):
     r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=5000)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
 
-    Y = [[1, 0, 0, 0, 3]] #variavel Y com os dados iniciais
+    Y = [[4, 0, 0, 0, 8]] #variavel Y com os dados iniciais
 
     while r.successful() and r.t < t:
         time = r.t + dt
@@ -143,15 +143,14 @@ x0 = [9.846, 0.55, 0.4]
 minimizer_kwargs = {"method": "BFGS"} #method BFGS # Nelder-Mead
 
 #for_real= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=10, seed=1, disp=True)
+tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=20, seed=1, disp=True, niter_success=5) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
 print(tentar)
 
-
+estimate(params)
 #######graficos
 Yx, Ys, Ya, Yv=[], [], [], []
 DEx, DEs, DEa, DEv=[], [], [], []
 T=[0]
-
 
 for i in range(40): #criar a lista com os tempos para fazer os graficos
     T.append(T[i]+0.5)
