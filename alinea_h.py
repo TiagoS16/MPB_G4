@@ -2,13 +2,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import sympy
-from scipy.integrate import ode
-from scipy.optimize import basinhopping
 from scipy.optimize import fsolve
 from sympy import *
 
-X, S, A, P = symbols('X S A P')
 
+#sympy symbols
+X, S, A, P = symbols('X S A P')
 
 #Reactions
 u1 = 0.25 * (S / (0.3 + S))

@@ -1,8 +1,9 @@
-import pandas as pd
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import ode
 import sympy
+
 
 def bl21_FB(t, y, params):
     X, S, A, P, V = y
@@ -129,7 +130,7 @@ ds_umax2 = dS_umax2(X, S, k2, Ks2)
 ds_Ks3 = np.zeros(20001)
 
 
-### X
+### plot X
 fig, ax = plt.subplots()
 fig.set_figheight(8)
 fig.set_figwidth(10)
@@ -172,7 +173,7 @@ ax.legend()
 plt.grid()
 plt.show()
 
-### S
+### plot S
 fig, ax = plt.subplots()
 fig.set_figheight(8)
 fig.set_figwidth(10)

@@ -1,8 +1,6 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import ode
-from scipy.optimize import basinhopping
 
 
 ##FED-BATCH##
@@ -71,6 +69,7 @@ while r.successful() and r.t < t:
     v.append(r.integrate(time)[4])
     #print(time, r.integrate(time))
 
+
 # Plotting
 T = np.array([0] + T)
 x = np.array([y0[0]] + x)
@@ -79,20 +78,7 @@ a = np.array([y0[2]] + a)
 p = np.array([y0[3]] + p)
 v = np.array([y0[4]] + v)
 
-'''
-print('#'*40)
-print(T)
-print('#'*40)
-print(x)
-print('#'*40)
-print(s)
-print('#'*40)
-print(a)
-print('#'*40)
-print(p)
-print('#'*40)
-#'''
-
+#plot
 plt.plot(T, x, label='Biomassa', color='blue')
 plt.plot(T, s, label='Substrato', color='red')
 plt.plot(T, a, label='Acetato', color='green')
