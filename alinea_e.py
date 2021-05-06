@@ -69,7 +69,7 @@ def estimate(params):
     global y0
     global Y
     global soma1
-    global coisa
+    global Y_legit
 
     r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=5000)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
@@ -87,9 +87,9 @@ def estimate(params):
         #isto é necessário porque a ODE estava a terminar com uma matriz com menos linhas e não permitia a execução do erro
         #o anterior acontecia porque a ODE não estava a conseguir integrar com sucesso (while r.successful no chunk acima)
         #para evitar isto fizemos com que o basinhopping use os valores anteriores da ODE caso a atual execução da mesma dê o tal erro
-        coisa= Y #guardar numa variavel diferente para no final conseguir usar a matriz dos estimados sem as falhas faladas anteriormente
+        Y_legit= Y #guardar numa variavel diferente para no final conseguir usar a matriz dos estimados sem as falhas faladas anteriormente
         #diferenca= np.subtract(Y, dados_exp)
-        diferenca = np.subtract(coisa, dados_exp) #diferença entre os valores
+        diferenca = np.subtract(Y_legit, dados_exp) #diferença entre os valores
         po = np.power(diferenca, 2) #diferença ao quadrado
         soma= po.sum(axis=0) #soma dos quadrados das diferenças
         soma1= soma.sum() #soma das somas dos quadrados das diferenças
@@ -143,10 +143,11 @@ x0 = [9.846, 0.55, 0.4]
 minimizer_kwargs = {"method": "BFGS"} #method BFGS # Nelder-Mead
 
 #for_real= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=20, seed=1, disp=True, niter_success=5) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
+tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=5, seed=1, niter_success=5) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
+param_est = tentar.x
 print(tentar)
+print('Os mínimos encontrados são {}.'.format(param_est))
 
-estimate(params)
 #######graficos
 Yx, Ys, Ya, Yv=[], [], [], []
 DEx, DEs, DEa, DEv=[], [], [], []
@@ -155,11 +156,11 @@ T=[0]
 for i in range(40): #criar a lista com os tempos para fazer os graficos
     T.append(T[i]+0.5)
 
-for i in range(len(coisa)): #separar as colunas da matriz dos estimados para obter os valores para fazer o grafico
-    Yx.append(coisa[i][0])
-    Ys.append(coisa[i][1])
-    Ya.append(coisa[i][2])
-    Yv.append(coisa[i][3])
+for i in range(len(Y_legit)): #separar as colunas da matriz dos estimados para obter os valores para fazer o grafico
+    Yx.append(Y_legit[i][0])
+    Ys.append(Y_legit[i][1])
+    Ya.append(Y_legit[i][2])
+    Yv.append(Y_legit[i][3])
 
 for i in range(len(dados_exp)): #separar as colunas da matriz dos dados experimentais para obter os valores para fazer o grafico
     DEx.append(dados_exp[i][0])
@@ -168,27 +169,57 @@ for i in range(len(dados_exp)): #separar as colunas da matriz dos dados experime
     DEv.append(dados_exp[i][3])
 
 #plot do grafico do estimado
-plt.plot(T, Yx, label='Biomassa', color='blue')
-plt.plot(T, Ys, label='Substrato', color='red')
-plt.plot(T, Ya, label='Acetato', color='green')
-plt.plot(T, Yv, label='Volume (L)', color='Purple')
-plt.legend(loc='best')
-plt.xlabel('Tempo (h)')
-plt.ylabel('Concentração (g/L)')
-#plt.xlim(0, 1)
-#plt.ylim(0, 30)
+fig, ax = plt.subplots()
+fig.set_figheight(8)
+fig.set_figwidth(10)
+ax.plot(T, Yx, label='Biomassa', color='blue')
+ax.plot(T, Ys, label='Substrato', color='red')
+ax.plot(T, Ya, label='Acetato', color='green')
+ax.plot(T, Yv, label='Volume (L)', color='Purple')
+ax.legend(loc='best')
+ax.set_xlabel('Tempo (h)')
+ax.set_ylabel('Concentrações (g/L)')
+ax.set_title('Model JM109 (Fed-Batch)')
+ax.legend()
 plt.grid()
 plt.show()
 
+
 #plot do grafico dos dados experimentais
-plt.plot(T, DEx, label='Biomassa', color='blue')
-plt.plot(T, DEs, label='Substrato', color='red')
-plt.plot(T, DEa, label='Acetato', color='green')
-plt.plot(T, DEv, label='Volume (L)', color='Purple')
-plt.legend(loc='best')
-plt.xlabel('Tempo (h)')
-plt.ylabel('Concentração (g/L)')
-#plt.xlim(0, 1)
-#plt.ylim(0, 30)
+fig, ax = plt.subplots()
+fig.set_figheight(8)
+fig.set_figwidth(10)
+ax.plot(T, DEx, label='Biomassa', color='blue')
+ax.plot(T, DEs, label='Substrato', color='red')
+ax.plot(T, DEa, label='Acetato', color='green')
+ax.plot(T, DEv, label='Volume (L)', color='purple')
+ax.legend(loc='best')
+ax.set_xlabel('Tempo (h)')
+ax.set_ylabel('Concentrações (g/L)')
+ax.set_title('Data JM109 (Fed-Batch)')
+ax.legend()
 plt.grid()
 plt.show()
+
+
+#grafico conjunto
+fig, ax = plt.subplots()
+fig.set_figheight(8)
+fig.set_figwidth(10)
+ax.plot(T, Yx, linewidth=2, label='Biomassa_estimada', color='blue')
+ax.plot(T, DEx, 'o-', markersize=4, linewidth=1, label='Biomassa_data', color='blue')  # label='Biomassa JM109'
+ax.plot(T, Ys, linewidth=2, label='Glucose_estimada', color='red')
+ax.plot(T, DEs, 'o-', markersize=4, linewidth=1, label='Glucose_data', color='red')  # label='Glucose JM109',
+ax.plot(T, Ya, linewidth=2, label='Acetato_estimado', color='green')
+ax.plot(T, DEa, 'o-', markersize=4, linewidth=1, label='Acetato_data', color='green')  # label='Acetato JM109',
+ax.plot(T, Yv, linewidth=2, label='Volume_estimado (L)', color='purple')
+ax.plot(T, DEv, 'o-', markersize=4, linewidth=1, label='Volume_data (L)', color='purple')  # , label='Volume JM109',
+ax.set_xlabel('Tempo (h)')
+ax.set_ylabel('Concentrações (g/L)')
+ax.set_title('Model JM109 vs Data JM109 (Fed-Batch)')
+ax.legend()
+plt.grid()
+plt.show()
+
+
+estimate(params)
