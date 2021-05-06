@@ -123,7 +123,6 @@ Ks2 = 0.3
 # create the dx and ds arrays executing the lambda function for the X, S, k4, umax2, ks3 values
 dx_k4 = np.zeros(20001)
 dx_umax2 = dX_umax2(X, S, Ks2)
-print(dx_umax2)
 dx_Ks3 = dX_Ks3(X, A, umax3, Ks3)
 ds_k4 = np.zeros(20001)
 ds_umax2 = dS_umax2(X, S, k2, Ks2)
