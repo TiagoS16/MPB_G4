@@ -219,25 +219,24 @@ x0 = [9.846, 0.55, 0.4]
 
 minimizer_kwargs = {"method": "BFGS"} #method BFGS
 
-for_real = basinhopping(estimate, x0, minimizer_kwargs=minimizer_kwargs, niter=2, accept_test=bounds, seed=1)
+for_real = basinhopping(estimate, x0, minimizer_kwargs=minimizer_kwargs, niter=200, accept_test=bounds, seed=1)
 #tentar = basinhopping(estimate, x0, minimizer_kwargs=minimizer_kwargs, accept_test=bounds, niter=1, seed=1) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
 param_est = for_real.x
 print(for_real)
 print('Os mínimos encontrados são {}.'.format(param_est))
 
 #redefinir os parametros para os minimos estimados
-k4= param_est[0]
+k4 = param_est[0]
 umax2 = param_est[1]
 Ks3 = param_est[2]
 
 #lista com os parametros fornecida a func
-param= [k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0, Fe, Se, umax2, Ks3]
+param = [k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, V0, Fe, Se, umax2, Ks3]
 
 modelo = bl21_FB
 
 final = run_ode(modelo, param)
 
-#######graficos
 Yx, Ys, Ya, Yv = [], [], [], []
 
 for i in range(len(final)): #separar as colunas da matriz dos estimados para obter os valores para fazer o grafico
