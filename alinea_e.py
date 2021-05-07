@@ -143,7 +143,7 @@ x0 = [9.846, 0.55, 0.4]
 minimizer_kwargs = {"method": "BFGS"} #method BFGS # Nelder-Mead
 
 #for_real= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=5, seed=1, niter_success=5) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
+tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=1, seed=1) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
 param_est = tentar.x
 print(tentar)
 print('Os mínimos encontrados são {}.'.format(param_est))
@@ -179,8 +179,7 @@ ax.plot(T, Yv, label='Volume (L)', color='Purple')
 ax.legend(loc='best')
 ax.set_xlabel('Tempo (h)')
 ax.set_ylabel('Concentrações (g/L)')
-ax.set_title('Model JM109 (Fed-Batch)')
-ax.legend()
+ax.set_title('Modelo JM109 (Fed-Batch)')
 plt.grid()
 plt.show()
 
@@ -196,8 +195,7 @@ ax.plot(T, DEv, label='Volume (L)', color='purple')
 ax.legend(loc='best')
 ax.set_xlabel('Tempo (h)')
 ax.set_ylabel('Concentrações (g/L)')
-ax.set_title('Data JM109 (Fed-Batch)')
-ax.legend()
+ax.set_title('Dados Experimentais JM109 (Fed-Batch)')
 plt.grid()
 plt.show()
 
@@ -208,16 +206,15 @@ fig.set_figheight(8)
 fig.set_figwidth(10)
 ax.plot(T, Yx, linewidth=2, label='Biomassa_estimada', color='blue')
 ax.plot(T, DEx, 'o-', markersize=4, linewidth=1, label='Biomassa_data', color='blue')  # label='Biomassa JM109'
-ax.plot(T, Ys, linewidth=2, label='Glucose_estimada', color='red')
-ax.plot(T, DEs, 'o-', markersize=4, linewidth=1, label='Glucose_data', color='red')  # label='Glucose JM109',
+ax.plot(T, Ys, linewidth=2, label='Substrato_estimada', color='red')
+ax.plot(T, DEs, 'o-', markersize=4, linewidth=1, label='Substrato_data', color='red')  # label='Glucose JM109',
 ax.plot(T, Ya, linewidth=2, label='Acetato_estimado', color='green')
 ax.plot(T, DEa, 'o-', markersize=4, linewidth=1, label='Acetato_data', color='green')  # label='Acetato JM109',
 ax.plot(T, Yv, linewidth=2, label='Volume_estimado (L)', color='purple')
 ax.plot(T, DEv, 'o-', markersize=4, linewidth=1, label='Volume_data (L)', color='purple')  # , label='Volume JM109',
 ax.set_xlabel('Tempo (h)')
 ax.set_ylabel('Concentrações (g/L)')
-ax.set_title('Model JM109 vs Data JM109 (Fed-Batch)')
-ax.legend()
+ax.set_title('Modelo JM109 vs Dados_exp JM109 (Fed-Batch)')
 plt.grid()
 plt.show()
 
