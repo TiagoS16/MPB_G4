@@ -214,6 +214,7 @@ ax.plot(T, DEv, 'o-', markersize=4, linewidth=1, label='Volume_data (L)', color=
 ax.set_xlabel('Tempo (h)')
 ax.set_ylabel('Concentração (g/L)')
 ax.set_title('Modelo JM109 vs Dados_exp JM109 (Fed-Batch)')
+ax.legend(loc='best')
 plt.grid()
 plt.show()
 
