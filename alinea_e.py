@@ -49,7 +49,6 @@ params = [k4, umax2, Ks3]
 t0= 0 #tempo inicial
 t= 20 #tempo final
 dt= 0.5 #intervalo de tempo entre reads
-#linspace
 
 
 def estimate(params):
@@ -142,16 +141,16 @@ x0 = [9.846, 0.55, 0.4]
 
 minimizer_kwargs = {"method": "BFGS"} #method BFGS # Nelder-Mead
 
-#for_real= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, niter= 200, accept_test= bounds, seed= 1)
-tentar= basinhopping(estimate, x0, minimizer_kwargs= minimizer_kwargs, accept_test= bounds, niter=1, seed=1) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
-param_est = tentar.x
-print(tentar)
+for_real = basinhopping(estimate, x0, minimizer_kwargs=minimizer_kwargs, niter=200, accept_test=bounds, seed=1)
+#tentar = basinhopping(estimate, x0, minimizer_kwargs=minimizer_kwargs, accept_test=bounds, niter=1, seed=1) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
+param_est = for_real.x
+print(for_real)
 print('Os mínimos encontrados são {}.'.format(param_est))
 
 #######graficos
-Yx, Ys, Ya, Yv=[], [], [], []
-DEx, DEs, DEa, DEv=[], [], [], []
-T=[0]
+Yx, Ys, Ya, Yv = [], [], [], []
+DEx, DEs, DEa, DEv = [], [], [], []
+T = [0]
 
 for i in range(40): #criar a lista com os tempos para fazer os graficos
     T.append(T[i]+0.5)
