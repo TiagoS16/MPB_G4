@@ -29,11 +29,11 @@ def jm109(t, y, params):
 
 
 # Initial conditions
-X0 = 4 #g/L  BL21=4  dados_exp=1
+X0 = 1 #g/L  BL21=4  dados_exp=1
 S0 = 0 #g/L
 A0 = 0 #g/L
 P0 = 0 #g/L
-V = 8 #L  BL21=8  dados_exp=3
+V = 3 #L  BL21=8  dados_exp=3
 
 #lista com os valores iniciais fornecida a func
 y0 = [X0, S0, A0, P0, V]
@@ -73,7 +73,7 @@ def estimate(params):
     r = ode(model).set_integrator('lsoda', method='bdf', lband=0, nsteps=5000)  # lband é o limite inferior -- para nao haver valores negativos
     r.set_initial_value(y0, t0).set_f_params(params)
 
-    Y = [[4, 0, 0, 0, 8]] #variavel Y com os dados iniciais
+    Y = [[1, 0, 0, 0, 3]] #variavel Y com os dados iniciais
 
     while r.successful() and r.t < t:
         time = r.t + dt
@@ -83,7 +83,7 @@ def estimate(params):
         Y[i].pop(3)
 
     if len(Y) == len(dados_exp): #a função só vai executar isto quando os tamanhos das 2 matrizes forem iguais
-        #isto é necessário porque a ODE estava a terminar com uma matriz com menos linhas e não permitia a execução do erro
+        #isto é necessário porque a ODE estava a terminar com uma matriz com menos linhas e não permitia a execução do calculo do erro
         #o anterior acontecia porque a ODE não estava a conseguir integrar com sucesso (while r.successful no chunk acima)
         #para evitar isto fizemos com que o basinhopping use os valores anteriores da ODE caso a atual execução da mesma dê o tal erro
         Y_legit= Y #guardar numa variavel diferente para no final conseguir usar a matriz dos estimados sem as falhas faladas anteriormente
@@ -139,7 +139,7 @@ bounds = Bounds(LB, UB)
 # initial guess, that is the initial values for the parameters to be estimated. It can be those available in the pdf
 x0 = [9.846, 0.55, 0.4]
 
-minimizer_kwargs = {"method": "BFGS"} #method BFGS # Nelder-Mead
+minimizer_kwargs = {"method": "BFGS"} #method BFGS
 
 for_real = basinhopping(estimate, x0, minimizer_kwargs=minimizer_kwargs, niter=200, accept_test=bounds, seed=1)
 #tentar = basinhopping(estimate, x0, minimizer_kwargs=minimizer_kwargs, accept_test=bounds, niter=1, seed=1) #niter_success para a otimização caso o mínimo se mantenha igual em n iterações sucessivas
@@ -219,4 +219,3 @@ plt.show()
 
 
 estimate(params)
-#começou às 12h
