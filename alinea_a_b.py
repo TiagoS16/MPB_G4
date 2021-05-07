@@ -86,7 +86,6 @@ ax.legend(loc='best')
 ax.set_xlabel('Tempo (h)')
 ax.set_ylabel('Concentração (g/L)')
 ax.set_title('Modelo BL21 (Batch)')
-plt.xlim(0., 7.0)
 plt.grid()
 plt.show()
 

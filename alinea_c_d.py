@@ -91,7 +91,6 @@ ax.legend(loc='best')
 ax.set_xlabel('Tempo (h)')
 ax.set_ylabel('Concentração (g/L)')
 ax.set_title('Modelo BL21 (Fed-Batch)')
-plt.xlim(0., 20.0)
 plt.grid()
 plt.show()
 
