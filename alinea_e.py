@@ -219,3 +219,4 @@ plt.show()
 
 
 estimate(params)
+#começou às 12h
