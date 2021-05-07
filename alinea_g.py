@@ -134,7 +134,7 @@ ax.plot(T, p, '--', linewidth=2, label='Proteína Recombinada BL21', color='pink
 ax.plot(T, v, '--', linewidth=2, label='Volume BL21 (L)', color='purple')
 ax.set_xlabel('Tempo (h)')
 ax.set_ylabel('Concentração (g/L)')
-ax.set_title('Modelo BL21 (Fed-Batch)  VS Modelo BL21 Reduzido (Fed-Batch)')
+ax.set_title('Modelo BL21 VS Modelo BL21 Reduzido (Fed-Batch)')
 ax.legend()
 plt.grid()
 plt.show()
