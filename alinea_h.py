@@ -178,7 +178,7 @@ def Jacobian(v_str, f_list):
             J[i,j] = sym.diff(fi, s)
     J = np.array(J).tolist()
     return J
-Jacobian('X G A P', ['u1*X + u2*X + u3*X - Fin*X',' - k1*u1*X - k2*u2*X + Fin*S0 - G*Fin', 'k3*u2* X - k4*u3*X - Fin*A', 'k11*u1*X - Fin*P'])
+Jacobian('X G A P', ['u1*X + u2*X + u3*X - Fin*X',' - k1*u1*X - k2*u2*X + Fin*S0 - G*Fin', 'k3*u2* X - k4*u3*X - Fin*A', 'k11*u1*X - Fin*P']) #tem de ser G em vez de S para o substrato
 
 #ponto 1
 #X1, G1, A1, P1 = 0, 12, 0, 0
