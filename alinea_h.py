@@ -1,19 +1,15 @@
 import pandas as pd
 import numpy as np
 import numdifftools as nd
-import matplotlib.pyplot as plt
 import sympy as sym
 from scipy.optimize import fsolve
 from sympy import *
 
 
 #sympy symbols
-X, S, A, P = symbols('X,S,A,P')#,umax1,umax2,umax3,Ks1,Ks2,Ks3,Fin,Fout,S0,k1,k2,k3,k4,k11
+X, S, A, P = symbols('X,S,A,P')
 
 #Reactions
-# u1 = umax1 * (S / (Ks1 + S))
-# u2 = umax2 * (S / (Ks2 + S))
-# u3 = umax3 * (A / (Ks3 + A))
 u1 = 0.25 * (S / (0.3 + S))
 u2 = 0.55 * (S / (0.3 + S))
 u3 = 0.25 * (A / (0.4 + A))
