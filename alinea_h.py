@@ -7,43 +7,45 @@ from sympy import *
 
 
 #sympy symbols
-X, S, A, P = symbols('X,S,A,P')
+# X, S, A, P = symbols('X,S,A,P')
+
+X, S, A, P, V, k1, k2, k3, k4, k11, Fin, Se = symbols('X,S,A,P,V,k1,k2,k3,k4,k11,Fin,Se')
 
 #Reactions
 u1 = 0.25 * (S / (0.3 + S))
 u2 = 0.55 * (S / (0.3 + S))
 u3 = 0.25 * (A / (0.4 + A))
 
-# Initial conditions
-X0= 4 #g/L
-S0= 0 #g/L
-A0= 0 #g/L
-P0= 0 #g/L
-V= 8 #L
+# # Initial conditions
+# X0= 7 #g/L
+# S0= 12 #g/L
+# A0= 0 #g/L
+# P0= 0 #g/L
+#V= 6 #L
 
 # Parameters
-k1= 4.412
-k2= 22.22
-k3= 8.61
-k4= 9.846
-k5= 3.253
-k6= 12.29
-k7= 4.085
-k8= 3.345
-k9= 21.04
-k10= 7.65
-k11= 13.21
-V0= 8 #o volume inicial não se altera
-Se= 350 #concentração do substrato de entrada g/L
-Fin= 0.7 #L/h || caudal de entrada || 350 g/L glucose
-Fout= Fin #caudal de saida
+# k1= 4.412
+# k2= 22.22
+# k3= 8.61
+# k4= 9.846
+# k5= 3.253
+# k6= 12.29
+# k7= 4.085
+# k8= 3.345
+# k9= 21.04
+# k10= 7.65
+# k11= 13.21
+# V0= 6 #o volume inicial não se altera
+# Se= 350 #concentração do substrato de entrada g/L
+# Fin= 0.7 #L/h || caudal de entrada || 350 g/L glucose
+# Fout= Fin #caudal de saida
 
 
-difX= u1 * X + u2 * X + u3 * X - Fin * X
-difS= - k1 * u1 * X - k2 * u2 * X + Fin * S0 - Fin * S
-difA= k3 * u2 * X - k4 * u3 * X - Fin * A
-difP= k11 * u1 * X - Fin * P
-difV= Fin - Fout
+difX= u1 * X + u2 * X + u3 * X - Fin/V * X
+difS= - k1 * u1 * X - k2 * u2 * X + Fin/V * Se - Fin/V * S
+difA= k3 * u2 * X - k4 * u3 * X - Fin/V * A
+difP= k11 * u1 * X - Fin/V * P
+difV= Fin - Fin
 todas= [difX, difS, difA, difP]
 
 
@@ -140,28 +142,23 @@ def fun(x):
     k4 = 9.846
     k11 = 13.21
     Fin = 0.7
+    Se = 350
+    V = 6
 
-    return [(u1 * X + u2 * X + u3 * X - Fin * X),
-            (- k1 * u1 * X - k2 * u2 * X + Fin * S0 - Fin * S),
-            (k3 * u2 * X - k4 * u3 * X - Fin * A),
-            (k11 * u1 * X - Fin * P)]
+    return [(u1 * X + u2 * X + u3 * X - Fin/V * X),
+            (- k1 * u1 * X - k2 * u2 * X + Fin/V * Se - Fin/V * S),
+            (k3 * u2 * X - k4 * u3 * X - Fin/V * A),
+            (k11 * u1 * X - Fin/V * P)]
 
 
-root = fsolve(fun, [0, 12, 0, 0])
+root = fsolve(fun, [0, 0, 0, 0])
 print(root)
 print(np.isclose(fun(root), [0.0, 0.0, 0.0, 0.0]))
 print()
-root1 = fsolve(fun, [7, 12, 0, 0])
+root1 = fsolve(fun, [7, 0, 0, 0])
 print(root1)
 print(np.isclose(fun(root1), [0.0, 0.0, 0.0, 0.0]))
 print()
-
-
-# difX= u1 * X + u2 * X + u3 * X - Fin * X
-# difS= - k1 * u1 * X - k2 * u2 * X + Fin * S0 - Fin * S
-# difA= k3 * u2 * X - k4 * u3 * X - Fin * A
-# difP= k11 * u1 * X - Fin * P
-# difV= Fin - Fout
 
 
 def Jacobian(v_str, f_list):
@@ -173,15 +170,30 @@ def Jacobian(v_str, f_list):
         for j, s in enumerate(vars):
             J[i,j] = sym.diff(fi, s)
     J = np.array(J).tolist()
+    print(J)
     return J
-Jacobian('X G A P', ['u1*X + u2*X + u3*X - Fin*X',' - k1*u1*X - k2*u2*X + Fin*S0 - G*Fin', 'k3*u2* X - k4*u3*X - Fin*A', 'k11*u1*X - Fin*P']) #tem de ser G em vez de S para o substrato
+Jacobian('X G A P', ['u1*X + u2*X + u3*X - Fin/V*X',' - k1*u1*X - k2*u2*X + Fin/V*Se - G*Fin/V', 'k3*u2* X - k4*u3*X - Fin/V*A', 'k11*u1*X - Fin/V*P']) #tem de ser G em vez de S para o substrato
+
+#[[-Fin/V + u1 + u2 + u3, 0, 0, 0], [-k1*u1 - k2*u2, -Fin/V, 0, 0], [k3*u2 - k4*u3, 0, -Fin/V, 0], [k11*u1, 0, 0, -Fin/V]]
 
 #ponto 1
-#X1, G1, A1, P1 = 0, 12, 0, 0
+#X1, G1, A1, P1 =
 
-#u1 = 0.2439
-#u2 = 0.53659
-#u3 = 0
+# u1 = 0.25 * (S / (0.3 + S))
+# u2 = 0.55 * (S / (0.3 + S))
+# u3 = 0.25 * (A / (0.4 + A))
+u1 =
+u2 =
+u3 =
+k1 = 4.412
+k2 = 22.22
+k3 = 8.61
+k4 = 9.846
+k11 = 13.21
+Fin = 0.7
+V = 6
+
+
 
 JJ = [[0.08049, 0, 0, 0], [-12.9991, -0.7, 0, 0], [4.62, 0, -0.7, 0], [3.22192, 0, 0, -0.7]]
 JJJ = np.array(JJ)

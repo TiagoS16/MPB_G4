@@ -112,10 +112,11 @@ v = np.array([y0[4]] + v)
 
 X = x
 S = s
-A = 0
+A = a
 k2 = 22.22
 k4 = 9.846  # restaurar os valores originais 
-umax2 = 0.55  # restaurar os valores originais 
+umax2 = 0.55  # restaurar os valores originais
+umax3 = 0.25
 Ks3 = 0.4  # restaurar os valores originais
 Ks2 = 0.3
 
@@ -133,9 +134,9 @@ ds_Ks3 = np.zeros(20001)
 fig, ax = plt.subplots()
 fig.set_figheight(8)
 fig.set_figwidth(10)
-ax.plot(T, dx_k4, '--', linewidth=2, linestyle='solid', label='X_k4', color='blue')
+ax.plot(T, dx_k4, linewidth=2, linestyle='solid', label='X_K4', color='blue')
 ax.set_xlabel('Tempo (h)')
-ax.set_title('Sensibilidade de X a k4 - BL21 (Fed-Batch)')
+ax.set_title('Sensibilidade de X a K4 - BL21 (Fed-Batch)')
 ax.legend()
 plt.grid()
 plt.show()
@@ -153,7 +154,7 @@ plt.show()
 fig, ax = plt.subplots()
 fig.set_figheight(8)
 fig.set_figwidth(10)
-ax.plot(T, dx_Ks3, linewidth=2, label='X_Ks3', color='orange')
+ax.plot(T, dx_Ks3, '--', linewidth=2, label='X_Ks3', color='orange')
 ax.set_xlabel('Tempo (h)')
 ax.set_title('Sensibilidade de X a Ks3 - BL21 (Fed-Batch)')
 ax.legend()
@@ -163,7 +164,7 @@ plt.show()
 fig, ax = plt.subplots()
 fig.set_figheight(8)
 fig.set_figwidth(10)
-ax.plot(T, dx_k4, linewidth=2, linestyle='solid', label='X_k4', color='blue')
+ax.plot(T, dx_k4, linewidth=2, linestyle='solid', label='X_K4', color='blue')
 ax.plot(T, dx_umax2, '--', linewidth=2, label='X_umax2', color='red')
 ax.plot(T, dx_Ks3, '--', linewidth=2, label='X_Ks3', color='orange')
 ax.set_xlabel('Tempo (h)')
@@ -176,9 +177,9 @@ plt.show()
 fig, ax = plt.subplots()
 fig.set_figheight(8)
 fig.set_figwidth(10)
-ax.plot(T, ds_k4, '--', linewidth=2, linestyle='solid', label='S_k4', color='blue')
+ax.plot(T, ds_k4, linewidth=2, linestyle='solid', label='S_K4', color='blue')
 ax.set_xlabel('Tempo (h)')
-ax.set_title('Sensibilidade de S a k4 - BL21 (Fed-Batch)')
+ax.set_title('Sensibilidade de S a K4 - BL21 (Fed-Batch)')
 ax.legend()
 plt.grid()
 plt.show()
@@ -206,7 +207,7 @@ plt.show()
 fig, ax = plt.subplots()
 fig.set_figheight(8)
 fig.set_figwidth(10)
-ax.plot(T, ds_k4, '--', linewidth=2, linestyle='solid', label='S_k4', color='blue')
+ax.plot(T, ds_k4, linewidth=2, linestyle='solid', label='S_K4', color='blue')
 ax.plot(T, ds_umax2, '--', linewidth=2, label='S_umax2', color='red')
 ax.plot(T, ds_Ks3, '--', linewidth=2, label='S_Ks3', color='orange')
 ax.set_xlabel('Tempo (h)')
