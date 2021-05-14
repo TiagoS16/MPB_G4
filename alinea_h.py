@@ -168,34 +168,32 @@ def Jacobian(v_str, f_list):
     J = sym.zeros(len(f),len(vars))
     for i, fi in enumerate(f):
         for j, s in enumerate(vars):
-            J[i,j] = sym.diff(fi, s)
+            J[i, j] = sym.diff(fi, s)
     J = np.array(J).tolist()
     print(J)
     return J
 Jacobian('X G A P', ['u1*X + u2*X + u3*X - Fin/V*X',' - k1*u1*X - k2*u2*X + Fin/V*Se - G*Fin/V', 'k3*u2* X - k4*u3*X - Fin/V*A', 'k11*u1*X - Fin/V*P']) #tem de ser G em vez de S para o substrato
 
+#jacobiano
 #[[-Fin/V + u1 + u2 + u3, 0, 0, 0], [-k1*u1 - k2*u2, -Fin/V, 0, 0], [k3*u2 - k4*u3, 0, -Fin/V, 0], [k11*u1, 0, 0, -Fin/V]]
 
+
+# k1 = 4.412
+# k2 = 22.22
+# k3 = 8.61
+# k4 = 9.846
+# k11 = 13.21
+# Fin = 0.7
+# V = 6
+
+
 #ponto 1
-#X1, G1, A1, P1 =
+#X1, G1, A1, P1 = 0, 350, 0, 0
+# u1 = 0.24979
+# u2 = 0.54953
+# u3 = 0
 
-# u1 = 0.25 * (S / (0.3 + S))
-# u2 = 0.55 * (S / (0.3 + S))
-# u3 = 0.25 * (A / (0.4 + A))
-u1 =
-u2 =
-u3 =
-k1 = 4.412
-k2 = 22.22
-k3 = 8.61
-k4 = 9.846
-k11 = 13.21
-Fin = 0.7
-V = 6
-
-
-
-JJ = [[0.08049, 0, 0, 0], [-12.9991, -0.7, 0, 0], [4.62, 0, -0.7, 0], [3.22192, 0, 0, -0.7]]
+JJ = [[0.68265, 0, 0, 0], [-13.31263, -0.11667, 0, 0], [4.73145, 0, -0.11667, 0], [3.29973, 0, 0, -0.11667]]
 JJJ = np.array(JJ)
 jjjj = np.linalg.det(JJJ)
 print('O determinante do ponto 1 é {}'.format(jjjj))
@@ -204,12 +202,12 @@ print('O traço do ponto 1 é {}'.format(jjjjj))
 
 
 #ponto 2
-#X2, S2, A2, P2 = -1.37289662*(10**-9), 1.20000000*(10**1), -1.06074905*(10**-8), -6.31708043*(10**-9)
-#u1=0.2439
-#u2=0.5638
-#u3=0.1524
+#X2, S2, A2, P2 = 33.6371514, 0.0300697191, 0.0849325999, 86.7438978
+# u1 = 0.02278
+# u2 = 0.05011
+# u3 = 0.04379
 
-LL = [[0.2611, 0, 0, 0], [-13.6037, -0.7, 0, 0], [3.3538, 0, -0.7, 0], [3.22192, 0, 0, -0.7]]
+LL = [[-0.04334, 0, 0, 0], [-1.21395, -0.11667, 0, 0], [0.00029, 0, -0.11667, 0], [0.30092, 0, 0, -0.11667]]
 LLL = np.array(LL)
 llll = np.linalg.det(LLL)
 print('O determinante do ponto 2 é {}'.format(llll))
