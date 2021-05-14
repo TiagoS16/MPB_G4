@@ -200,6 +200,8 @@ print('O determinante do ponto 1 é {}'.format(jjjj))
 jjjjj = np.trace(JJJ)
 print('O traço do ponto 1 é {}'.format(jjjjj))
 
+#ponto instavel sela
+
 
 #ponto 2
 #X2, S2, A2, P2 = 33.6371514, 0.0300697191, 0.0849325999, 86.7438978
@@ -215,4 +217,4 @@ lllll = np.trace(LLL)
 print('O traço do ponto 2 é {}'.format(lllll))
 
 
-#são os dois pontos sela
+#ponto estavel
